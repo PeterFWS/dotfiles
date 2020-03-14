@@ -43,7 +43,7 @@ fi
 # We stores its value to the above file
 DOTFILES_CONFIG_OUT=""
 append_config() {
-    DOTFILES_CONFIG_OUT+="$1=${!1}\n"
+    DOTFILES_CONFIG_OUT+="export $1=${!1}\n"
 }
 
 append_config DOTFILES_HOME
