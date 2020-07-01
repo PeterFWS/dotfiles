@@ -76,6 +76,9 @@ autocmd BufWinEnter,WinEnter term://* startinsert
 " ... and leave it when leaving the panel
 autocmd BufLeave term://* stopinsert
 
+" display relative file numbers in terminal
+au TermOpen * setlocal nonumber relativenumber
+
 " close nvr when closing git commands editor from terminal
 autocmd FileType gitcommit,gitrebase,gitconfig set bufhidden=delete
 
@@ -127,16 +130,18 @@ call setreg('l', "f,ls")
 let g:location_list_open = 0
 function! LocationListToggle()
     if g:location_list_open == 0
-        :silent! lopen
+        lopen
         let g:location_list_open = 1
     else
-        :silent! lclose
+        lclose
         let g:location_list_open = 0
     endif
 endfunction
 
 " replace the default "man" by cppman (for cpp source files only)
 autocmd FileType cpp set keywordprg=:term\ cppman
+
+nnoremap <leader>ll :call LocationListToggle()<CR>
 
 """"""""" PLUGINS
 call plug#begin()
@@ -147,7 +152,7 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'lesurp/vim_spell_checker_rotation'
-Plug 'lesurp/git-blame.vim'
+"Plug 'lesurp/git-blame.vim'
 
 Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh \| UpdateRemotePlugins' }
 
@@ -156,7 +161,7 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " lsp
-Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
 
@@ -214,7 +219,7 @@ function! s:blame_if_no_term()
 
     call gitblame#echo()
 endfunction
-autocmd CursorHold * call s:blame_if_no_term()
+"autocmd CursorHold * call s:blame_if_no_term()
 
 """"""""""""""""""""""""" SPELLCHECKROTATE CONFIG
 nnoremap <leader>sp :<C-U>call SpellCheckRotate(v:count)<cr>
@@ -233,12 +238,13 @@ nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 nnoremap <silent> gc :CocList<CR>
 nnoremap <silent> gd :call CocAction('jumpDefinition')<CR>
+nnoremap <silent> gt :call CocAction('jumpDefinition', 'tab drop')<CR>
 nnoremap <silent> ge :CocList diagnostics<CR>
-nnoremap <silent> gf :CocFix<CR>
 nnoremap <silent> gs :CocList outline<CR>
 nnoremap <silent> gr :call CocAction('jumpReferences')<CR>
+nnoremap <silent> gx :CocAction('quickfix')<cr>
+nnoremap <silent> gf :CocFix<CR>
 nmap <silent> gh :call CocAction('doHover')<CR>
-nmap <silent> gx <Plug>(coc-fix-current)
 " how do I get this?
 "nnoremap <silent> gv :call CocAction('preview')<CR>
 nnoremap <silent> <F2> :call CocAction('rename')<CR>
